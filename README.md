@@ -54,7 +54,7 @@ The application is configured to connect to your local MySQL instance. You can m
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=library_db;User=root;Password=LAK242004;"
+  "DefaultConnection": "Server=localhost;Database=library_db;User=root;Password=YOUR_PASSWORD;"
 }
 ```
 
@@ -67,7 +67,7 @@ Open your terminal or command prompt and execute the following:
 
 1. Navigate to the project root folder:
    ```bash
-   cd "C:\Users\forrl\Library Management System"
+   cd "path/to/Library Management System"
    ```
 
 2. Compile and run the project:
