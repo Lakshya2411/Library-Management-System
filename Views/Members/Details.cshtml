@@ -1,0 +1,165 @@
+@model LibraryManagementSystem.Models.Member
+@{
+    ViewData["Title"] = "Member Profile";
+    var loans = ViewBag.Loans as List<LibraryManagementSystem.Models.Loan> ?? new List<LibraryManagementSystem.Models.Loan>();
+    var activeLoansCount = loans.Count(l => !l.IsReturned);
+    var overdueLoansCount = loans.Count(l => l.IsOverdue);
+    var totalFinesCollected = loans.Where(l => l.IsReturned).Sum(l => l.FineAmount);
+    var totalPendingFines = loans.Where(l => !l.IsReturned && DateTime.Today > l.DueDate).Sum(l => (decimal)(DateTime.Today - l.DueDate).Days * 1.00m);
+}
+
+<div class="mb-4">
+    <a href="/Members" class="btn btn-sm btn-glass mb-3"><i class="fa-solid fa-arrow-left me-2"></i>Back to Registry</a>
+    <h1 class="text-gradient mb-0 font-weight-800">Member Profile</h1>
+    <p class="text-muted">Viewing account card and borrowing logs for @Model.FullName</p>
+</div>
+
+<div class="row g-4">
+    <!-- Profile Card Panel -->
+    <div class="col-lg-5">
+        <div class="glass-card d-flex flex-column h-100 justify-content-between gap-4">
+            <div>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    @if (Model.Status == "Active")
+                    {
+                        <span class="badge-custom badge-active">Active Status</span>
+                    }
+                    else
+                    {
+                        <span class="badge-custom badge-suspended">Suspended Status</span>
+                    }
+                    <div class="text-end text-muted fs-7">
+                        Member ID: <strong>#@Model.Id</strong>
+                    </div>
+                </div>
+
+                <h2 class="text-white mb-1">@Model.FullName</h2>
+                <div class="text-muted fs-7 mb-4"><i class="fa-solid fa-envelope me-1"></i> @Model.Email</div>
+
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                        <span class="text-secondary font-weight-500">Phone Number</span>
+                        <span class="text-white">@Model.PhoneNumber</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                        <span class="text-secondary font-weight-500">Register Date</span>
+                        <span class="text-white">@Model.JoinDate.ToString("yyyy-MM-dd")</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                        <span class="text-secondary font-weight-500">Active Borrowings</span>
+                        <span class="text-white font-weight-600">@activeLoansCount Books</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                        <span class="text-secondary font-weight-500">Overdue Alerts</span>
+                        <span class="@(overdueLoansCount > 0 ? "text-danger font-weight-700" : "text-white")">@overdueLoansCount Items</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                        <span class="text-secondary font-weight-500">Total Fines Paid</span>
+                        <span class="text-emerald font-weight-600">$@totalFinesCollected.ToString("F2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between pb-1">
+                        <span class="text-secondary font-weight-500">Pending Fines</span>
+                        <span class="@(totalPendingFines > 0 ? "text-danger font-weight-700" : "text-white")">$@totalPendingFines.ToString("F2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggles and CRUD buttons -->
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex gap-2">
+                    <a href="/Members/Edit/@Model.Id" class="btn btn-glass flex-grow-1"><i class="fa-solid fa-pen me-2 text-warning"></i>Edit Info</a>
+                    <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" class="flex-grow-1">
+                        @if (Model.Status == "Active")
+                        {
+                            <button type="submit" class="btn btn-glass w-100"><i class="fa-solid fa-user-slash me-2 text-danger"></i>Suspend</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-glass w-100"><i class="fa-solid fa-user-check me-2 text-success"></i>Activate</button>
+                        }
+                    </form>
+                </div>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this member registration?');">
+                    <button type="submit" class="btn btn-glass w-100"><i class="fa-solid fa-trash me-2 text-danger"></i>Delete Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan logs of the member -->
+    <div class="col-lg-7">
+        <div class="glass-card h-100">
+            <h4 class="mb-3 text-white"><i class="fa-solid fa-book-reader me-2 text-primary"></i>Member Borrowing Log</h4>
+            
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table glass-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Issued On</th>
+                            <th>Due Date</th>
+                            <th>Returned On</th>
+                            <th>Fine</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!loans.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-folder-open fs-3 mb-2"></i>
+                                    <p class="mb-0">This member has not checked out any books yet.</p>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var loan in loans)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="/Books/Details/@loan.BookId" class="text-white font-weight-500 text-decoration-none">
+                                            @loan.Book?.Title
+                                        </a>
+                                    </td>
+                                    <td>@loan.IssueDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @(loan.ReturnDate.HasValue ? loan.ReturnDate.Value.ToString("yyyy-MM-dd") : "-")
+                                    </td>
+                                    <td>
+                                        @if (loan.FineAmount > 0)
+                                        {
+                                            <span class="@(loan.IsReturned ? "text-emerald" : "text-danger") font-weight-600">
+                                                $@loan.FineAmount.ToString("F2")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (loan.IsReturned)
+                                        {
+                                            <span class="badge-custom badge-returned">Returned</span>
+                                        }
+                                        else if (loan.IsOverdue)
+                                        {
+                                            <span class="badge-custom badge-overdue">Overdue</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-custom badge-active">Active</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

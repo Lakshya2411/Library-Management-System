@@ -1,0 +1,57 @@
+@model LibraryManagementSystem.Models.Loan
+@{
+    ViewData["Title"] = "Book Checkout";
+}
+
+<div class="mb-4">
+    <a href="/Loans" class="btn btn-sm btn-glass mb-3"><i class="fa-solid fa-arrow-left me-2"></i>Back to Logs</a>
+    <h1 class="text-gradient mb-0 font-weight-800">Book Checkout</h1>
+    <p class="text-muted">Issue a book loan by selecting an active member and an available book copy</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card">
+            <form asp-action="Create" method="post" class="d-flex flex-column gap-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Book Dropdown Selection -->
+                <div class="form-group">
+                    <label asp-for="BookId" class="form-label text-muted font-weight-600 mb-2">Select Book Copy</label>
+                    <select asp-for="BookId" class="form-select form-glass" asp-items="ViewBag.BookId">
+                        <option value="">-- Select Available Book --</option>
+                    </select>
+                    <span asp-validation-for="BookId" class="text-danger fs-7"></span>
+                    <div class="fs-7 text-muted mt-1">Only books currently in stock are listed.</div>
+                </div>
+
+                <!-- Member Dropdown Selection -->
+                <div class="form-group">
+                    <label asp-for="MemberId" class="form-label text-muted font-weight-600 mb-2">Select Member Profile</label>
+                    <select asp-for="MemberId" class="form-select form-glass" asp-items="ViewBag.MemberId">
+                        <option value="">-- Select Active Member --</option>
+                    </select>
+                    <span asp-validation-for="MemberId" class="text-danger fs-7"></span>
+                    <div class="fs-7 text-muted mt-1">Suspended members cannot borrow books.</div>
+                </div>
+
+                <!-- Due Date Input -->
+                <div class="form-group">
+                    <label asp-for="DueDate" class="form-label text-muted font-weight-600 mb-2">Due Return Date</label>
+                    <input asp-for="DueDate" type="date" class="form-control form-glass" value="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DueDate" class="text-danger fs-7"></span>
+                    <div class="fs-7 text-muted mt-1">Default borrowing period is 14 days (2 weeks).</div>
+                </div>
+
+                <div class="form-group mt-3 d-flex gap-3 justify-content-end">
+                    <a href="/Loans" class="btn btn-glass px-4">Cancel</a>
+                    <button type="submit" class="btn btn-gradient px-4">Issue Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

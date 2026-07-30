@@ -1,0 +1,76 @@
+@model LibraryManagementSystem.Models.Book
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="mb-4">
+    <a href="/Books" class="btn btn-sm btn-glass mb-3"><i class="fa-solid fa-arrow-left me-2"></i>Back to Catalog</a>
+    <h1 class="text-gradient mb-0 font-weight-800">Edit Book Details</h1>
+    <p class="text-muted">Modify properties for book ID: <code class="text-light">@Model.Id</code></p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card">
+            <form asp-action="Edit" method="post" class="d-flex flex-column gap-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="AvailableCopies" />
+
+                <div class="form-group">
+                    <label asp-for="Title" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="Title" class="form-control form-glass" />
+                    <span asp-validation-for="Title" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Author" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="Author" class="form-control form-glass" />
+                    <span asp-validation-for="Author" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="ISBN" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="ISBN" class="form-control form-glass" />
+                        <span asp-validation-for="ISBN" class="text-danger fs-7"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Genre" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="Genre" class="form-control form-glass" />
+                        <span asp-validation-for="Genre" class="text-danger fs-7"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="TotalCopies" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="TotalCopies" type="number" class="form-control form-glass" min="0" />
+                        <span asp-validation-for="TotalCopies" class="text-danger fs-7"></span>
+                        <div class="fs-7 text-muted mt-1">Available: @Model.AvailableCopies of @Model.TotalCopies</div>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="PublishYear" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="PublishYear" type="number" class="form-control form-glass" min="1000" max="2100" />
+                        <span asp-validation-for="PublishYear" class="text-danger fs-7"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Publisher" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="Publisher" class="form-control form-glass" />
+                    <span asp-validation-for="Publisher" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group mt-3 d-flex gap-3 justify-content-end">
+                    <a href="/Books" class="btn btn-glass px-4">Cancel</a>
+                    <button type="submit" class="btn btn-gradient px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

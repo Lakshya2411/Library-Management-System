@@ -1,0 +1,164 @@
+@model IEnumerable<LibraryManagementSystem.Models.Loan>
+@{
+    ViewData["Title"] = "Borrow / Return Management";
+    var today = DateTime.Today;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="text-gradient mb-0 font-weight-800">Borrow / Return Logs</h1>
+        <p class="text-muted mb-0">Record checkouts, returns, and track fine transactions</p>
+    </div>
+    <a href="/Loans/Create" class="btn btn-gradient">
+        <i class="fa-solid fa-cart-flatbed-suitcases me-2"></i>New Book Checkout
+    </a>
+</div>
+
+<!-- Filters & Search Bar -->
+<div class="glass-card mb-4 py-3 px-4">
+    <form method="get" asp-action="Index" class="row g-3 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 text-muted" style="border: 1px solid var(--glass-border); border-top-left-radius: 12px; border-bottom-left-radius: 12px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" name="searchString" value="@ViewBag.CurrentSearch" class="form-control form-glass border-start-0" style="border-top-left-radius: 0; border-bottom-left-radius: 0;" placeholder="Search by Book or Member..." />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select name="statusFilter" class="form-select form-glass">
+                <option value="">All Transactions</option>
+                @if (ViewBag.CurrentStatus == "Active")
+                {
+                    <option value="Active" selected>Active Loans</option>
+                    <option value="Overdue">Overdue Loans</option>
+                    <option value="Returned">Returned Items</option>
+                }
+                else if (ViewBag.CurrentStatus == "Overdue")
+                {
+                    <option value="Active">Active Loans</option>
+                    <option value="Overdue" selected>Overdue Loans</option>
+                    <option value="Returned">Returned Items</option>
+                }
+                else if (ViewBag.CurrentStatus == "Returned")
+                {
+                    <option value="Active">Active Loans</option>
+                    <option value="Overdue">Overdue Loans</option>
+                    <option value="Returned" selected>Returned Items</option>
+                }
+                else
+                {
+                    <option value="Active">Active Loans</option>
+                    <option value="Overdue">Overdue Loans</option>
+                    <option value="Returned">Returned Items</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-glass flex-grow-1">Filter</button>
+            <a href="/Loans" class="btn btn-glass"><i class="fa-solid fa-rotate-left"></i></a>
+        </div>
+    </form>
+</div>
+
+<!-- Loans Table -->
+<div class="glass-card p-0">
+    <div class="table-responsive">
+        <table class="table glass-table">
+            <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Borrower</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Overdue Fines</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-handshake-slash fs-2 mb-3"></i>
+                            <p class="mb-0">No borrowing records found.</p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/Books/Details/@item.BookId" class="text-white font-weight-600 text-decoration-none">
+                                    @item.Book?.Title
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/Members/Details/@item.MemberId" class="text-light text-decoration-none">
+                                    @item.Member?.FullName
+                                </a>
+                            </td>
+                            <td>@item.IssueDate.ToString("yyyy-MM-dd")</td>
+                            <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @(item.ReturnDate.HasValue ? item.ReturnDate.Value.ToString("yyyy-MM-dd") : "-")
+                            </td>
+                            <td>
+                                @if (item.FineAmount > 0)
+                                {
+                                    <span class="@(item.IsReturned ? "text-emerald" : "text-danger") font-weight-600">
+                                        $@item.FineAmount.ToString("F2")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsReturned)
+                                {
+                                    <span class="badge-custom badge-returned">Returned</span>
+                                }
+                                else if (item.IsOverdue)
+                                {
+                                    <span class="badge-custom badge-overdue">@item.OverdueDays Days Overdue</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-custom badge-active">Active</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (!item.IsReturned)
+                                {
+                                    <form asp-action="Return" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-gradient px-3 py-1">
+                                            Return Book
+                                        </button>
+                                    </form>
+                                }
+                                else if (item.FineAmount > 0)
+                                {
+                                    <form asp-action="PayFine" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-glass px-3 py-1 text-success">
+                                            <i class="fa-solid fa-wallet me-1"></i>Pay Fine
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fs-7"><i class="fa-solid fa-circle-check text-emerald me-1"></i>Settled</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

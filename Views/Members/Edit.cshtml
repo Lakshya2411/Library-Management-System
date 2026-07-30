@@ -1,0 +1,65 @@
+@model LibraryManagementSystem.Models.Member
+@{
+    ViewData["Title"] = "Edit Member Details";
+}
+
+<div class="mb-4">
+    <a href="/Members" class="btn btn-sm btn-glass mb-3"><i class="fa-solid fa-arrow-left me-2"></i>Back to Registry</a>
+    <h1 class="text-gradient mb-0 font-weight-800">Edit Member Profile</h1>
+    <p class="text-muted">Modify information for Member ID: <code class="text-light">#@Model.Id</code></p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card">
+            <form asp-action="Edit" method="post" class="d-flex flex-column gap-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="JoinDate" />
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="FirstName" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="FirstName" class="form-control form-glass" />
+                        <span asp-validation-for="FirstName" class="text-danger fs-7"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="LastName" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="LastName" class="form-control form-glass" />
+                        <span asp-validation-for="LastName" class="text-danger fs-7"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="Email" type="email" class="form-control form-glass" />
+                    <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="PhoneNumber" class="form-control form-glass" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Status" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <select asp-for="Status" class="form-select form-glass">
+                        <option value="Active">Active</option>
+                        <option value="Suspended">Suspended</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group mt-3 d-flex gap-3 justify-content-end">
+                    <a href="/Members" class="btn btn-glass px-4">Cancel</a>
+                    <button type="submit" class="btn btn-gradient px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

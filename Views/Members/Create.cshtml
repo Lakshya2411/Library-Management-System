@@ -1,0 +1,54 @@
+@model LibraryManagementSystem.Models.Member
+@{
+    ViewData["Title"] = "Register Member";
+}
+
+<div class="mb-4">
+    <a href="/Members" class="btn btn-sm btn-glass mb-3"><i class="fa-solid fa-arrow-left me-2"></i>Back to Registry</a>
+    <h1 class="text-gradient mb-0 font-weight-800">Register New Member</h1>
+    <p class="text-muted">Enter details below to create a new library membership profile</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card">
+            <form asp-action="Create" method="post" class="d-flex flex-column gap-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="FirstName" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="FirstName" class="form-control form-glass" placeholder="e.g. Jane" />
+                        <span asp-validation-for="FirstName" class="text-danger fs-7"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="LastName" class="form-label text-muted font-weight-600 mb-2"></label>
+                        <input asp-for="LastName" class="form-control form-glass" placeholder="e.g. Smith" />
+                        <span asp-validation-for="LastName" class="text-danger fs-7"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="Email" type="email" class="form-control form-glass" placeholder="e.g. jane.smith@example.com" />
+                    <span asp-validation-for="Email" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="form-label text-muted font-weight-600 mb-2"></label>
+                    <input asp-for="PhoneNumber" class="form-control form-glass" placeholder="e.g. +1234567890" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger fs-7"></span>
+                </div>
+
+                <div class="form-group mt-3 d-flex gap-3 justify-content-end">
+                    <a href="/Members" class="btn btn-glass px-4">Cancel</a>
+                    <button type="submit" class="btn btn-gradient px-4">Register Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
