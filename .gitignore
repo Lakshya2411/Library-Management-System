@@ -1,0 +1,70 @@
+## Ignore Visual Studio temporary files, build results, and
+## user-specific files.
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider / IntelliJ
+.idea/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Mono class library database
+*.mdb
+*.mdb.meta
+
+# Mono Map file
+*.map
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Publish Web Output
+*.publish.htm
+*.pubxml
+*.pubxml.user
+
+# NuGet packages
+*.nupkg
+# The packages folder can be ignored because NuGet will restore them
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+
+# NuGet Restore artifacts
+project.lock.json
+project.assets.json
+*.nuget.props
+*.nuget.targets
+
+# OS files
+.DS_Store
+Thumbs.db
